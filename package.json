@@ -1,8 +1,9 @@
 {
    "name": "nestjs-sequelize-seeder",
    "version": "1.0.0",
-   "description": "A simple extension library for nestjs sequelize to perform seeding.",
+   "description": "🌾 A simple extension library for nestjs sequelize to perform seeding.",
    "main": "dist/index.js",
+   "type": "dist/index.d.ts",
    "directories": {
       "lib": "lib"
    },
