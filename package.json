@@ -1,0 +1,36 @@
+{
+   "name": "nestjs-sequelize-seeder",
+   "version": "1.0.0",
+   "description": "A simple extension library for nestjs sequelize to perform seeding.",
+   "main": "dist/index.js",
+   "directories": {
+      "lib": "lib"
+   },
+   "scripts": {
+      "format": "prettier --write \"lib/**/*.ts\" ",
+      "build": "yarn prebuild & tsc",
+      "dev": "yarn prebuild & tsc -w",
+      "prebuild": "rimraf dist"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/yoicalsin/nestjs-sequelize-seeder.git"
+   },
+   "keywords": [
+      "seeding",
+      "seeder",
+      "seed",
+      "nestjs",
+      "seeder"
+   ],
+   "author": "Yoni Calsin <helloyonicb@gmail.com>",
+   "license": "MIT",
+   "bugs": {
+      "url": "https://github.com/yoicalsin/nestjs-sequelize-seeder/issues"
+   },
+   "homepage": "https://github.com/yoicalsin/nestjs-sequelize-seeder#readme",
+   "devDependencies": {
+      "prettier": "^1.19.1",
+      "rimraf": "^3.0.2"
+   }
+}
