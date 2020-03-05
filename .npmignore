@@ -4,7 +4,7 @@
 /.npmignore
 /.npmrc
 /.prettierrc.js
-/changelog.config.js
-/index.ts
-/tsconfig.json
-/renovate.json
+changelog.config.js
+index.ts
+tsconfig.json
+renovate.json
