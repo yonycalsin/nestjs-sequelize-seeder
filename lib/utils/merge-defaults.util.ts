@@ -3,6 +3,7 @@ import { DEFAULT_CONNECTION_NAME } from '@nestjs/sequelize/dist/sequelize.consta
 
 const defaultOptions: SeederModuleOptions = {
    isGlobal: true,
+   logging: true,
    connection: DEFAULT_CONNECTION_NAME,
 };
 
