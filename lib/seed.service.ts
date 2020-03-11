@@ -33,9 +33,14 @@ export class SeederService {
             for (const vv of meta) {
                item[vv] = v[vv];
                isExist = await this.isUnique(item);
-               if (isExist) {
-                  this.model.create(v);
-               }
+            }
+            if (isExist) {
+               this.model.create(v);
+            } else {
+               const msg = `${chalk.green('[Seeder]')} ${chalk.redBright(
+                  '[Error...]',
+               )} ${chalk.redBright(JSON.stringify(v) + ' already exists')}`;
+               console.log(msg);
             }
          } else {
             this.model.create(v).catch(err => {
