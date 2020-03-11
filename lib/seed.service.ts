@@ -37,10 +37,12 @@ export class SeederService {
             if (isExist) {
                this.model.create(v);
             } else {
-               const msg = `${chalk.green('[Seeder]')} ${chalk.redBright(
+               const msg = `${chalk.green('[Seeder]')} ${chalk.yellowBright(
                   '[Error...]',
-               )} ${chalk.redBright(JSON.stringify(v) + ' already exists')}`;
-               console.log(msg);
+               )} ${JSON.stringify(v)} ${chalk.yellow(' already exists !')}\n`;
+               if (this.options.logging) {
+                  console.log(msg);
+               }
             }
          } else {
             this.model.create(v).catch(err => {
