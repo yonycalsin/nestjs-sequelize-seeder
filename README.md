@@ -51,6 +51,7 @@ import { SeederModule } from 'nestjs-sequelize-seeder';
    imports: [
       SeederModule.forRoot({
          isGlobal: true, // Default: true
+         logging: true, // Default: true
       }),
    ],
 })
@@ -59,13 +60,22 @@ export class AppModule {}
 
 The **forRoot()** method supports all the configuration properties exposed by the seeder constuctor . In addition, there are several extra configuration properties described below.
 
-| name     | Description                                            | type      |
-| -------- | ------------------------------------------------------ | --------- |
-| isGlobal | If you want the module globally (**default: _true_** ) | _boolean_ |
+| name     | Description                                                              | type      |
+| -------- | ------------------------------------------------------------------------ | --------- |
+| isGlobal | If you want the module globally (**default: _true_** )                   | _boolean_ |
+| logging  | Option to display or not, the log of each creation (**default: _true_**) | _boolean_ |
 
 ### Seeder
 
 Sequelize implements the Active Record pattern. With this pattern, you use model classes directly to interact with the database. To continue the example, we need at least one seed. Let's define the User seed.
+
+The decorator `Seeder` receives as parameter the unique values, this has to be added if you have in the table any column as unique !
+
+```ts
+@Seeder({
+   unique: ['name'] // You can add more !
+})
+```
 
 ```ts
 import { Seeder, OnSeederInit } from 'nestjs-sequelize-seeder';

@@ -2,11 +2,12 @@ import { Module, DynamicModule } from '@nestjs/common';
 import { SeederService } from './seed.service';
 import { SEEDER_SERVICE_TOKEN, SEEDER_OPTIONS } from './seed.constants';
 import { SeederModuleOptions } from './interfaces';
-import { mergeDefaults } from './utils/merge-defaults.util';
 import { createSeederProviders } from './seed.providers';
 import { SequelizeOptions } from 'sequelize-typescript';
 import { DEFAULT_CONNECTION_NAME } from '@nestjs/sequelize/dist/sequelize.constants';
 import { SeederItem } from './interfaces';
+import { Merge } from 'merge-options-default';
+import { defaultOptions } from './utils/merge-defaults.util';
 
 @Module({
    providers: [
@@ -19,7 +20,7 @@ import { SeederItem } from './interfaces';
 })
 export class SeederModule {
    static forRoot(options: SeederModuleOptions = {}): DynamicModule {
-      options = mergeDefaults(options);
+      options = Merge(defaultOptions, options);
       const providers = [
          {
             provide: SEEDER_OPTIONS,
