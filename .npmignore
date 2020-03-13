@@ -1,9 +1,9 @@
+# Folders
 /.vscode
 /lib
-/.gitignore
-/.npmignore
-/.npmrc
-/.prettierrc.js
+
+# Files
+.prettierrc.js
 changelog.config.js
 index.ts
 tsconfig.json
