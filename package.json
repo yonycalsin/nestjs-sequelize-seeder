@@ -35,6 +35,6 @@
       "rimraf": "3.0.2"
    },
    "dependencies": {
-      "merge-options-default": "^1.0.0"
+      "merge-options-default": "^1.0.1"
    }
 }
