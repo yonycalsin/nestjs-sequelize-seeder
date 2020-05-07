@@ -1,13 +1,23 @@
-import { SeederMetadata } from './interfaces';
+import { Model } from 'sequelize-typescript';
+import Merge from 'merge-options-default';
+import { seeder_token } from './seed.constants';
+import { __rest } from 'tslib';
 
-const defaultMetadata: SeederMetadata = {
+const defaultOptions: { unique: string[] } = {
    unique: [],
 };
 
-export function Seeder(metadata: SeederMetadata = defaultMetadata) {
-   return (constructor: Function) => {
-      for (const key in metadata) {
-         Reflect.defineMetadata(key, (metadata as any)[key], constructor);
-      }
+interface Options extends Partial<typeof defaultOptions> {
+   model: typeof Model;
+}
+
+export function Seeder(options?: Options) {
+   options = Merge(defaultOptions, options, {
+      modelName: options.model.name,
+   }) as any;
+   options = __rest(options, ['model']);
+
+   return (target: Function) => {
+      Reflect.defineMetadata(seeder_token.decorator, options, target);
    };
 }
