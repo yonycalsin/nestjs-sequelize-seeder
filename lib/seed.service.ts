@@ -1,56 +1,81 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { SEEDER_OPTIONS } from './seed.constants';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { seeder_token } from './seed.constants';
 import { SeederModuleOptions } from './interfaces/seed-module-options.interface';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
-import chalk from 'chalk';
 
 @Injectable()
 export class SeederService {
    private model: ModelCtor<Model<any, any>>;
+   private con: Sequelize;
+   private seed: any;
+   private seedData: any;
+   public log: Logger;
+   private data: any;
    constructor(
-      @Inject(SEEDER_OPTIONS)
-      private options: SeederModuleOptions, // private sequelize: Sequelize,
-      private sequelize: Sequelize,
-   ) {}
-   setModel(name: string) {
-      this.model = this.sequelize.model(name);
+      @Inject(seeder_token.options)
+      public readonly options: SeederModuleOptions,
+   ) {
+      this.log = new Logger('SeederService', true);
    }
-   async isUnique(where) {
-      return await this.model.count({ where }).then(count => {
-         if (count > 0) {
-            return false;
-         }
-         return true;
-      });
+
+   async onSeedInit(connection: Sequelize, seed: any, seedData: any) {
+      // Setting all objects
+      this.con = connection;
+      this.model = this.con.models[seedData.modelName];
+      this.seed = new seed();
+      this.data = this.seed.run();
+      this.seedData = seedData;
+
+      // Called all the cracks
+      await this.initialized();
    }
-   async autoCreated(data: any[], meta: string[] = []) {
-      for (const v of data) {
-         let item = {};
-         const is = meta.length > 0;
-         let isExist = null;
-         if (is) {
-            for (const vv of meta) {
-               item[vv] = v[vv];
-               isExist = await this.isUnique(item);
-            }
-            if (isExist) {
-               this.model.create(v);
-            } else {
-               const msg = `${chalk.green('[Seeder]')} ${chalk.yellowBright(
-                  '[Error...]',
-               )} ${JSON.stringify(v)} ${chalk.yellow(' already exists !')}\n`;
-               if (this.options.logging) {
-                  console.log(msg);
+
+   private async isUnique(where: any) {
+      try {
+         const data = await this.model.findOne({ where });
+         if (data) return true;
+         return false;
+      } catch (err) {
+         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+      }
+   }
+
+   private async createItem(item: any) {
+      console.log(item);
+   }
+
+   private async initialized() {
+      const uniques = this.seedData.unique;
+      const hasUniques = uniques.length > 0;
+      const isLog = this.options.logging;
+
+      for (const [key, item] of Object.entries<any>(this.data)) {
+         let alreadyitem = false;
+
+         if (hasUniques) {
+            let uniqueData = {};
+            for (const unique of uniques) {
+               if (item[unique]) {
+                  uniqueData[unique] = item[unique];
+               } else {
+                  this.log.warn(
+                     `Valor indefinido para '${unique}' en el item '${key}'`,
+                  );
                }
             }
+            alreadyitem = await this.isUnique(uniqueData);
+
+            if (!alreadyitem) {
+               await this.createItem(item);
+            } else {
+               isLog &&
+                  this.log.verbose(
+                     `Already exist '${Object.values(item).join(', ')}'`,
+                  );
+            }
          } else {
-            this.model.create(v).catch(err => {
-               const msg = `${chalk.green('[Seeder]')} ${chalk.redBright(
-                  '[ERROR...]',
-               )} ${chalk.redBright(err.parent.sqlMessage)}`;
-               console.log(msg);
-            });
+            await this.createItem(item);
          }
       }
    }
