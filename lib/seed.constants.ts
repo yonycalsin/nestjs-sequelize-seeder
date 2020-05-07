@@ -2,6 +2,9 @@
  * Injection tokens
  */
 
-export const SEEDER_SERVICE_TOKEN = Symbol('SEEDER_SERVICE');
-export const SEEDER_TOKEN = 'SEEDER_TOKEN';
-export const SEEDER_OPTIONS = 'SEEDER_OPTIONS';
+export const seeder_token = {
+   service: 'seeder_token::service',
+   token: 'seeder_token::token',
+   options: 'seeder_token::options',
+   decorator: 'seeder_token::decorator',
+};
