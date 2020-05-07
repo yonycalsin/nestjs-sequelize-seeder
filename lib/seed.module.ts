@@ -16,6 +16,10 @@ import { getConnectionToken } from '@nestjs/sequelize';
    exports: [SeederService],
 })
 export class SeederModule {
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param options SeederModuleOptions
+    */
    static forRoot(options?: SeederModuleOptions): DynamicModule {
       options = Merge(defaultOptions, options);
       const providers = [
@@ -32,6 +36,12 @@ export class SeederModule {
          exports: [...providers],
       };
    }
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param seeds Function | Function[]
+    * @param connection string | undefined
+    */
    static forFeature(
       seeds: Function | Function[],
       connection?: string,
@@ -46,6 +56,11 @@ export class SeederModule {
       };
    }
 
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param seeds Function[]
+    * @param connection string | undefined
+    */
    private static createProviders(seeds: Function[], connection?: string) {
       return seeds.map(
          (seed: Function): Provider => {

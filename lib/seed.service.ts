@@ -2,7 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { seeder_token } from './seed.constants';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
-import { SeederModuleOptions } from '.';
+import { SeederModuleOptions, More } from '.';
 
 @Injectable()
 export class SeederService {
@@ -19,7 +19,14 @@ export class SeederService {
       this.log = new Logger('SeederService', true);
    }
 
-   async onSeedInit(connection: Sequelize, seed: any, seedData: any) {
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description This is the main method to create a seed!
+    * @param connection Sequelize
+    * @param seed Object | Function
+    * @param seedData More
+    */
+   async onSeedInit(connection: Sequelize, seed: any, seedData: More) {
       if (this.options.disabled) {
          return;
       }
@@ -35,7 +42,12 @@ export class SeederService {
       await this.initialized();
    }
 
-   private async isUnique(where: any) {
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description Check if the object exists !
+    * @param where More
+    */
+   private async isUnique(where: More) {
       try {
          const data = await this.model.findOne({ where });
          if (data) return true;
@@ -45,7 +57,12 @@ export class SeederService {
       }
    }
 
-   private async createItem(item: any) {
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description Create the object if it does not exist, and display a success message !
+    * @param item More
+    */
+   private async createItem(item: More) {
       this.model.create(item).then(res => {
          this.options.logging &&
             this.log.log(
@@ -56,6 +73,10 @@ export class SeederService {
       });
    }
 
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description This function executes all the creation and alteration code of all the objects !
+    */
    private async initialized() {
       const uniques = this.seedData.unique;
       const hasUniques = uniques.length > 0;
