@@ -20,6 +20,10 @@ export class SeederService {
    }
 
    async onSeedInit(connection: Sequelize, seed: any, seedData: any) {
+      if (this.options.disabled) {
+         return;
+      }
+
       // Setting all objects
       this.con = connection;
       this.model = this.con.models[seedData.modelName];
@@ -42,7 +46,14 @@ export class SeederService {
    }
 
    private async createItem(item: any) {
-      console.log(item);
+      this.model.create(item).then(res => {
+         this.options.logging &&
+            this.log.log(
+               `Created correctly, '${Object.values(res).join(
+                  ', ',
+               )}' with 'nestjs-sequelize-seeder' !`,
+            );
+      });
    }
 
    private async initialized() {
@@ -50,8 +61,13 @@ export class SeederService {
       const hasUniques = uniques.length > 0;
       const isLog = this.options.logging;
 
-      for (const [key, item] of Object.entries<any>(this.data)) {
+      for (let [key, item] of Object.entries<any>(this.data)) {
          let alreadyitem = false;
+
+         // Called everyone function if exist !
+         if (this.seed.everyone) {
+            item = this.seed.everyone(item);
+         }
 
          if (hasUniques) {
             let uniqueData = {};
@@ -60,7 +76,7 @@ export class SeederService {
                   uniqueData[unique] = item[unique];
                } else {
                   this.log.warn(
-                     `Valor indefinido para '${unique}' en el item '${key}'`,
+                     `Undefined value for '${unique}' in object ${0}`,
                   );
                }
             }
@@ -71,7 +87,9 @@ export class SeederService {
             } else {
                isLog &&
                   this.log.verbose(
-                     `Already exist '${Object.values(item).join(', ')}'`,
+                     `Already exists ${
+                        this.seedData.modelName
+                     } :${key} '${Object.values(item).join(', ')}'`,
                   );
             }
          } else {
