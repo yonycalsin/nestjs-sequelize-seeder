@@ -1,29 +1,30 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { SeederService } from './seed.service';
-import { SEEDER_SERVICE_TOKEN, SEEDER_OPTIONS } from './seed.constants';
-import { SeederModuleOptions } from './interfaces';
-import { createSeederProviders } from './seed.providers';
-import { SequelizeOptions } from 'sequelize-typescript';
-import { DEFAULT_CONNECTION_NAME } from '@nestjs/sequelize/dist/sequelize.constants';
-import { SeederItem } from './interfaces';
+import { seeder_token } from './seed.constants';
+import { SeederModuleOptions, defaultOptions } from '.';
 import { Merge } from 'merge-options-default';
-import { defaultOptions } from './utils/merge-defaults.util';
+import { isArray } from 'is-all-utils';
+import { getConnectionToken } from '@nestjs/sequelize';
 
 @Module({
    providers: [
       {
          provide: SeederService,
-         useExisting: SEEDER_SERVICE_TOKEN,
+         useExisting: seeder_token.service,
       },
    ],
    exports: [SeederService],
 })
 export class SeederModule {
-   static forRoot(options: SeederModuleOptions = {}): DynamicModule {
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param options SeederModuleOptions
+    */
+   static forRoot(options?: SeederModuleOptions): DynamicModule {
       options = Merge(defaultOptions, options);
       const providers = [
          {
-            provide: SEEDER_OPTIONS,
+            provide: seeder_token.options,
             useValue: options,
          },
          SeederService,
@@ -35,15 +36,46 @@ export class SeederModule {
          exports: [...providers],
       };
    }
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param seeds Function | Function[]
+    * @param connection string | undefined
+    */
    static forFeature(
-      seeds: SeederItem[] = [],
-      connection: SequelizeOptions | string = DEFAULT_CONNECTION_NAME,
+      seeds: Function | Function[],
+      connection?: string,
    ): DynamicModule {
-      const providers = createSeederProviders(seeds, connection);
+      !isArray(seeds) && (seeds = [seeds as Function]);
+      const providers = this.createProviders(seeds as Function[], connection);
+
       return {
          module: SeederModule,
          providers: [SeederService, ...providers],
          exports: [SeederService, ...providers],
       };
+   }
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @param seeds Function[]
+    * @param connection string | undefined
+    */
+   private static createProviders(seeds: Function[], connection?: string) {
+      return seeds.map(
+         (seed: Function): Provider => {
+            return {
+               provide: seed.name,
+               useFactory: async (con, service: SeederService) => {
+                  const seedData = Reflect.getMetadata(
+                     seeder_token.decorator,
+                     seed,
+                  );
+                  await service.onSeedInit(con, seed, seedData);
+               },
+               inject: [getConnectionToken(connection), SeederService],
+            };
+         },
+      );
    }
 }

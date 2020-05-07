@@ -36,7 +36,7 @@ You simply need to install the package !
 
 ```ts
 // We install with npm, but you could use the package manager you prefer !
-npm install -S nestjs-sequelize-seeder
+npm install --save nestjs-sequelize-seeder
 ```
 
 ## ▶️ Getting started
@@ -52,6 +52,8 @@ import { SeederModule } from 'nestjs-sequelize-seeder';
       SeederModule.forRoot({
          isGlobal: true, // Default: true
          logging: true, // Default: true
+         disabled: false, // Default: false
+         connection: 'default', // Default: default
       }),
    ],
 })
@@ -60,10 +62,12 @@ export class AppModule {}
 
 The **forRoot()** method supports all the configuration properties exposed by the seeder constuctor . In addition, there are several extra configuration properties described below.
 
-| name     | Description                                                              | type      |
-| -------- | ------------------------------------------------------------------------ | --------- |
-| isGlobal | If you want the module globally (**default: _true_** )                   | _boolean_ |
-| logging  | Option to display or not, the log of each creation (**default: _true_**) | _boolean_ |
+| name       | Description                                                                                                                                             | type      |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| isGlobal   | If you want the module globally (**default: _true_** )                                                                                                  | _boolean_ |
+| logging    | Option to display or not, the log of each creation (**default: _true_**)                                                                                | _boolean_ |
+| disabled   | This option allows you to disable the whole module, it is very useful for production mode (**default: _false_**)                                        | _boolean_ |
+| connection | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**) | _string_  |
 
 ### Seeder
 
@@ -73,59 +77,66 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
 
 ```ts
 @Seeder({
+   model: ModelUser,
    unique: ['name'] // You can add more !
 })
 ```
 
 ```ts
 import { Seeder, OnSeederInit } from 'nestjs-sequelize-seeder';
+import { ModelUser } from 'src/models/user';
 
 @Seeder({
-   unique: ['name'],
+   model: ModelUser,
+   unique: ['name', 'username'],
 })
 export class SeedUser implements OnSeederInit {
-   autoCreated() {
+   run() {
       const data = [
          {
             name: 'Admin',
+            username: 'admin',
             age: 34,
             created_at: new Date().toISOString(),
          },
          {
             name: 'Editor',
+            username: 'editor',
             age: 25,
             created_at: new Date().toISOString(),
          },
       ];
       return data;
    }
+
+   // This function is optional!
+   everyone(data) {
+      // Here you can customize what you want for each object !
+      console.log(data);
+      return data;
+   }
 }
 ```
 
-Next, let's look at the **UsersModule:**
+Next, let's look at the **UserModule:**
 
 ```ts
 import { Module } from '@nestjs/common';
 import { SeederModule } from 'nestjs-sequelize-seeder';
 import { SeedUser } from 'src/seeds/user.seed';
-import { ModelUser } from 'src/models/user.model';
 
 @Module({
    imports: [
-      SeederModule.forFeature([
-         {
-            model: ModelUser,
-            schema: SeedUser,
-         },
-      ]),
+      // Within an array!
+      SeederModule.forFeature([SeedUser]),
    ],
 })
-export class UsersModule {}
+export class UserModule {}
 ```
 
 ## ⭐ Support for
 
-Sass-colors is an open source project licensed by [MIT](LICENSE). You can grow thanks to the sponsors and the support of the amazing sponsors. If you want to join them, [contact me here](mailto:helloyonicb@gmail.com).
+`nestjs-sequelize-seeder` is an open source project licensed by [MIT](LICENSE). You can grow thanks to the sponsors and the support of the amazing sponsors. If you want to join them, [contact me here](mailto:helloyonicb@gmail.com).
 
 ## 🎩 Stay in touch
 
@@ -134,4 +145,4 @@ Sass-colors is an open source project licensed by [MIT](LICENSE). You can grow t
 
 ## 📜 License
 
-Sass-colors is [MIT licensed](LICENSE).
+`nestjs-sequelize-seeder` is [MIT licensed](LICENSE).

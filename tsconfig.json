@@ -8,8 +8,8 @@
       "target": "es2017",
       "sourceMap": false,
       "outDir": "./dist",
-      "baseUrl": "./src",
+      "baseUrl": "./lib",
       "incremental": false
    },
-   "exclude": ["node_modules", "dist"]
+   "exclude": ["node_modules", "dist", "index.ts"]
 }

@@ -1,13 +1,26 @@
-import { SeederMetadata } from './interfaces';
+import Merge from 'merge-options-default';
+import { seeder_token } from './seed.constants';
+import { __rest } from 'tslib';
+import { SeederOptions } from '.';
 
-const defaultMetadata: SeederMetadata = {
+/**
+ * Default options for decorators
+ */
+const defaultOptions = {
    unique: [],
 };
 
-export function Seeder(metadata: SeederMetadata = defaultMetadata) {
-   return (constructor: Function) => {
-      for (const key in metadata) {
-         Reflect.defineMetadata(key, (metadata as any)[key], constructor);
-      }
+/**
+ * @author Yoni Calsin <helloyonicb@gmail.com>
+ * @param options SeederOptions
+ */
+export function Seeder(options?: SeederOptions) {
+   options = Merge(defaultOptions, options, {
+      modelName: options.model.name,
+   }) as any;
+   options = __rest(options, ['model']);
+
+   return (target: Function) => {
+      Reflect.defineMetadata(seeder_token.decorator, options, target);
    };
 }

@@ -1,56 +1,120 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { SEEDER_OPTIONS } from './seed.constants';
-import { SeederModuleOptions } from './interfaces/seed-module-options.interface';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { seeder_token } from './seed.constants';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
-import chalk from 'chalk';
+import { SeederModuleOptions, More } from '.';
 
 @Injectable()
 export class SeederService {
    private model: ModelCtor<Model<any, any>>;
+   private con: Sequelize;
+   private seed: any;
+   private seedData: any;
+   public log: Logger;
+   private data: any;
    constructor(
-      @Inject(SEEDER_OPTIONS)
-      private options: SeederModuleOptions, // private sequelize: Sequelize,
-      private sequelize: Sequelize,
-   ) {}
-   setModel(name: string) {
-      this.model = this.sequelize.model(name);
+      @Inject(seeder_token.options)
+      public readonly options: SeederModuleOptions,
+   ) {
+      this.log = new Logger('SeederService', true);
    }
-   async isUnique(where) {
-      return await this.model.count({ where }).then(count => {
-         if (count > 0) {
-            return false;
-         }
-         return true;
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description This is the main method to create a seed!
+    * @param connection Sequelize
+    * @param seed Object | Function
+    * @param seedData More
+    */
+   async onSeedInit(connection: Sequelize, seed: any, seedData: More) {
+      if (this.options.disabled) {
+         return;
+      }
+
+      // Setting all objects
+      this.con = connection;
+      this.model = this.con.models[seedData.modelName];
+      this.seed = new seed();
+      this.data = this.seed.run();
+      this.seedData = seedData;
+
+      // Called all the cracks
+      await this.initialized();
+   }
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description Check if the object exists !
+    * @param where More
+    */
+   private async isUnique(where: More) {
+      try {
+         const data = await this.model.findOne({ where });
+         if (data) return true;
+         return false;
+      } catch (err) {
+         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+      }
+   }
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description Create the object if it does not exist, and display a success message !
+    * @param item More
+    */
+   private async createItem(item: More) {
+      this.model.create(item).then(res => {
+         this.options.logging &&
+            this.log.log(
+               `Created correctly, '${Object.values(res).join(
+                  ', ',
+               )}' with 'nestjs-sequelize-seeder' !`,
+            );
       });
    }
-   async autoCreated(data: any[], meta: string[] = []) {
-      for (const v of data) {
-         let item = {};
-         const is = meta.length > 0;
-         let isExist = null;
-         if (is) {
-            for (const vv of meta) {
-               item[vv] = v[vv];
-               isExist = await this.isUnique(item);
-            }
-            if (isExist) {
-               this.model.create(v);
-            } else {
-               const msg = `${chalk.green('[Seeder]')} ${chalk.yellowBright(
-                  '[Error...]',
-               )} ${JSON.stringify(v)} ${chalk.yellow(' already exists !')}\n`;
-               if (this.options.logging) {
-                  console.log(msg);
+
+   /**
+    * @author Yoni Calsin <helloyonicb@gmail.com>
+    * @description This function executes all the creation and alteration code of all the objects !
+    */
+   private async initialized() {
+      const uniques = this.seedData.unique;
+      const hasUniques = uniques.length > 0;
+      const isLog = this.options.logging;
+
+      for (let [key, item] of Object.entries<any>(this.data)) {
+         let alreadyitem = false;
+
+         // Called everyone function if exist !
+         if (this.seed.everyone) {
+            item = this.seed.everyone(item);
+         }
+
+         if (hasUniques) {
+            let uniqueData = {};
+            for (const unique of uniques) {
+               if (item[unique]) {
+                  uniqueData[unique] = item[unique];
+               } else {
+                  this.log.warn(
+                     `Undefined value for '${unique}' in object ${0}`,
+                  );
                }
             }
+            alreadyitem = await this.isUnique(uniqueData);
+
+            if (!alreadyitem) {
+               await this.createItem(item);
+            } else {
+               isLog &&
+                  this.log.verbose(
+                     `Already exists ${
+                        this.seedData.modelName
+                     } :${key} '${Object.values(item).join(', ')}'`,
+                  );
+            }
          } else {
-            this.model.create(v).catch(err => {
-               const msg = `${chalk.green('[Seeder]')} ${chalk.redBright(
-                  '[ERROR...]',
-               )} ${chalk.redBright(err.parent.sqlMessage)}`;
-               console.log(msg);
-            });
+            await this.createItem(item);
          }
       }
    }
