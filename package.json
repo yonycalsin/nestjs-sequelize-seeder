@@ -37,5 +37,16 @@
    "dependencies": {
       "is-all-utils": "^1.0.3",
       "merge-options-default": "^1.0.2"
+   },
+   "peerDependencies": {
+      "tslib": "*",
+      "@nestjs/sequelize": "*",
+      "sequelize": "*",
+      "sequelize-typescript": "*",
+      "mysql2": "*",
+      "@nestjs/core": "*",
+      "@nestjs/common": "*",
+      "reflect-metadata": "*",
+      "rxjs": "*"
    }
 }
