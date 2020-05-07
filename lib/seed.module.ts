@@ -17,7 +17,7 @@ import { getConnectionToken } from '@nestjs/sequelize';
    exports: [SeederService],
 })
 export class SeederModule {
-   static forRoot(options: SeederModuleOptions): DynamicModule {
+   static forRoot(options?: SeederModuleOptions): DynamicModule {
       options = Merge(defaultOptions, options);
       const providers = [
          {
