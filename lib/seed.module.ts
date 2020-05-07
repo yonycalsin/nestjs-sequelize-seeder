@@ -1,9 +1,8 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { SeederService } from './seed.service';
 import { seeder_token } from './seed.constants';
-import { SeederModuleOptions } from './interfaces';
+import { SeederModuleOptions, defaultOptions } from '.';
 import { Merge } from 'merge-options-default';
-import { defaultOptions } from './utils/merge-defaults.util';
 import { isArray } from 'is-all-utils';
 import { getConnectionToken } from '@nestjs/sequelize';
 
