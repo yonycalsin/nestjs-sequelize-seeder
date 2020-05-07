@@ -1,8 +1,8 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { seeder_token } from './seed.constants';
-import { SeederModuleOptions } from './interfaces/seed-module-options.interface';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
+import { SeederModuleOptions } from '.';
 
 @Injectable()
 export class SeederService {
