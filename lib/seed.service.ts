@@ -3,6 +3,8 @@ import { seeder_token } from './seed.constants';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
 import { SeederModuleOptions, More } from '.';
+import { __rest } from 'tslib';
+import MergeDefault from 'merge-options-default';
 
 @Injectable()
 export class SeederService {
@@ -14,7 +16,7 @@ export class SeederService {
    private data: any;
    constructor(
       @Inject(seeder_token.options)
-      public readonly options: SeederModuleOptions,
+      public options: SeederModuleOptions,
    ) {
       this.log = new Logger('SeederService', true);
    }
@@ -27,6 +29,20 @@ export class SeederService {
     * @param seedData More
     */
    async onSeedInit(connection: Sequelize, seed: any, seedData: More) {
+      /**
+       * @author Yoni Calsin <helloyonicb@gmail.com>
+       * @description Merge seedData with options for some options
+       */
+      const newSeedData: SeederModuleOptions = __rest(seedData, [
+         'modelName',
+         'unique',
+      ]);
+
+      this.options = MergeDefault<SeederModuleOptions>(
+         this.options,
+         newSeedData,
+      );
+
       if (this.options.disabled) {
          return;
       }
