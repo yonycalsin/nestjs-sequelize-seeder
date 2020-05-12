@@ -53,6 +53,7 @@ import { SeederModule } from 'nestjs-sequelize-seeder';
          isGlobal: true, // Default: true
          logging: true, // Default: true
          disabled: false, // Default: false
+         runOnlyIfTableIsEmpty: false, // Default: false
          connection: 'default', // Default: default
       }),
    ],
@@ -62,12 +63,13 @@ export class AppModule {}
 
 The **forRoot()** method supports all the configuration properties exposed by the seeder constuctor . In addition, there are several extra configuration properties described below.
 
-| name       | Description                                                                                                                                             | type      |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| isGlobal   | If you want the module globally (**default: _true_** )                                                                                                  | _boolean_ |
-| logging    | Option to display or not, the log of each creation (**default: _true_**)                                                                                | _boolean_ |
-| disabled   | This option allows you to disable the whole module, it is very useful for production mode (**default: _false_**)                                        | _boolean_ |
-| connection | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**) | _string_  |
+| name                  | Description                                                                                                                                             | type      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| isGlobal              | If you want the module globally (**default: _true_** )                                                                                                  | _boolean_ |
+| logging               | Option to display or not, the log of each creation (**default: _true_**)                                                                                | _boolean_ |
+| disabled              | This option allows you to disable the whole module, it is very useful for production mode (**default: _false_**)                                        | _boolean_ |
+| runOnlyIfTableIsEmpty | This option allows you to disable if the table is empty (**default: _false_**)                                                                          | _boolean_ |
+| connection            | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**) | _string_  |
 
 ### Seeder
 
