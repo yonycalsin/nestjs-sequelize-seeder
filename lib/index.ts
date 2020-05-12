@@ -18,6 +18,7 @@ export interface SeederModuleOptions {
    isGlobal?: boolean;
    logging?: boolean;
    disabled?: boolean;
+   runOnlyIfTableIsEmpty?: boolean;
    connection?: string;
 }
 
@@ -37,6 +38,7 @@ export const defaultOptions: SeederModuleOptions = {
    isGlobal: true,
    logging: true,
    disabled: false,
+   runOnlyIfTableIsEmpty: false,
    connection: DEFAULT_CONNECTION_NAME,
 };
 

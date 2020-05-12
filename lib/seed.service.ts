@@ -31,6 +31,14 @@ export class SeederService {
          return;
       }
 
+      /**
+       * @author Gabriel Vieira <gabrielvt14@hotmail.com>
+       * @description Execute this if property `runOnlyIfTableIsEmpty` is true
+       */
+      if (this.options.runOnlyIfTableIsEmpty) {
+         if (await this.verifyIfTableIsEmpty()) return;
+      }
+
       // Setting all objects
       this.con = connection;
       this.model = this.con.models[seedData.modelName];
@@ -51,6 +59,20 @@ export class SeederService {
       try {
          const data = await this.model.findOne({ where });
          if (data) return true;
+         return false;
+      } catch (err) {
+         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+      }
+   }
+
+   /**
+    * @author Gabriel Vieira <gabrielvt14@hotmail.com>
+    * @description Check if the table is empty
+    */
+   private async verifyIfTableIsEmpty(): Promise<boolean> {
+      try {
+         const data = await this.model.count();
+         if (data > 0) return true;
          return false;
       } catch (err) {
          throw new Error(`[SeederService] ${err.original.sqlMessage}`);
