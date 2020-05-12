@@ -48,20 +48,20 @@ export class SeederService {
          return;
       }
 
-      /**
-       * @author Gabriel Vieira <gabrielvt14@hotmail.com>
-       * @description Execute this if property `runOnlyIfTableIsEmpty` is true
-       */
-      if (this.options.runOnlyIfTableIsEmpty) {
-         if (await this.verifyIfTableIsEmpty()) return;
-      }
-
       // Setting all objects
       this.con = connection;
       this.model = this.con.models[seedData.modelName];
 
       if (!this.model) {
          return this.log.error(`${seedData.modelName} not Found !`);
+      }
+
+      /**
+       * @author Gabriel Vieira <gabrielvt14@hotmail.com>
+       * @description Execute this if property `runOnlyIfTableIsEmpty` is true
+       */
+      if (this.options.runOnlyIfTableIsEmpty) {
+         if (await this.verifyIfTableIsEmpty()) return;
       }
 
       // Installing functions individually !
