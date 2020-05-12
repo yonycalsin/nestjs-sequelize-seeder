@@ -5,6 +5,7 @@ import { ModelCtor, Model } from 'sequelize/types';
 import { SeederModuleOptions, More } from '.';
 import { __rest } from 'tslib';
 import MergeDefault from 'merge-options-default';
+import { isUndefined } from 'is-all-utils';
 
 @Injectable()
 export class SeederService {
@@ -58,6 +59,12 @@ export class SeederService {
       // Setting all objects
       this.con = connection;
       this.model = this.con.models[seedData.modelName];
+
+      if (!this.model) {
+         return this.log.error(`${seedData.modelName} not Found !`);
+      }
+
+      // Installing functions individually !
       this.seed = new seed();
       this.data = this.seed.run();
       this.seedData = seedData;
