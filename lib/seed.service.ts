@@ -72,7 +72,7 @@ export class SeederService {
    private async verifyIfTableIsEmpty(): Promise<boolean> {
       try {
          const data = await this.model.count();
-         if (data === 0) return true;
+         if (data > 0) return true;
          return false;
       } catch (err) {
          throw new Error(`[SeederService] ${err.original.sqlMessage}`);
