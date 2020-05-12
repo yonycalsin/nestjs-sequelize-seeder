@@ -55,7 +55,7 @@ export class SeederService {
     * @description Check if the object exists !
     * @param where More
     */
-   private async isUnique(where: More) {
+   private async isUnique(where: More): Promise<boolean> {
       try {
          const data = await this.model.findOne({ where });
          if (data) return true;
@@ -84,22 +84,26 @@ export class SeederService {
     * @description Create the object if it does not exist, and display a success message !
     * @param item More
     */
-   private async createItem(item: More) {
-      this.model.create(item).then(res => {
-         this.options.logging &&
-            this.log.log(
-               `Created correctly, '${Object.values(res).join(
-                  ', ',
-               )}' with 'nestjs-sequelize-seeder' !`,
-            );
-      });
+   private async createItem(item: More): Promise<void> {
+      try {
+         this.model.create(item).then(res => {
+            this.options.logging &&
+               this.log.log(
+                  `Created correctly, '${Object.values(res).join(
+                     ', ',
+                  )}' with 'nestjs-sequelize-seeder' !`,
+               );
+         });
+      } catch (err) {
+         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+      }
    }
 
    /**
     * @author Yoni Calsin <helloyonicb@gmail.com>
     * @description This function executes all the creation and alteration code of all the objects !
     */
-   private async initialized() {
+   private async initialized(): Promise<void> {
       const uniques = this.seedData.unique;
       const hasUniques = uniques.length > 0;
       const isLog = this.options.logging;
