@@ -103,13 +103,13 @@ export class SeedUser implements OnSeederInit {
             name: 'Admin',
             username: 'admin',
             age: 34,
-            created_at: new Date().toISOString(),
+            password: 'admin_password',
          },
          {
             name: 'Editor',
             username: 'editor',
             age: 25,
-            created_at: new Date().toISOString(),
+            password: 'editor_password',
          },
       ];
       return data;
@@ -117,8 +117,17 @@ export class SeedUser implements OnSeederInit {
 
    // This function is optional!
    everyone(data) {
-      // Here you can customize what you want for each object !
-      console.log(data);
+      // Encrypting the password for each user !
+      if (data.password) {
+         const salt = genSaltSync(10);
+         data.password = hashSync(data.password, salt);
+         data.salt = salt;
+      }
+
+      // Aggregated timestamps
+      data.created_at = new Date().toISOString();
+      data.updated_at = new Date().toISOString();
+
       return data;
    }
 }
