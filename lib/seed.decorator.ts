@@ -6,7 +6,7 @@ import { SeederOptions } from '.';
 /**
  * Default options for decorators
  */
-const defaultOptions = {
+const defaultOptions: Omit<SeederOptions, 'model'> = {
    unique: [],
 };
 
