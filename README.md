@@ -80,7 +80,11 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
 ```ts
 @Seeder({
    model: ModelUser,
-   unique: ['name'] // You can add more !
+   unique: ['name'], // You can add more !
+   // Here you can also add the following options, but those options only work for this seeder !
+   disabled: false,
+   logging: true,
+   runOnlyIfTableIsEmpty: false
 })
 ```
 
