@@ -88,7 +88,7 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
 })
 ```
 
-> `genSaltSync` and `hashSync` are imported from **bcryptjs**, tendra que install, you will have to install it independently !
+> `genSaltSync` and `hashSync` are imported from **bcryptjs**, you will have to install it independently !
 
 ```ts
 import { Seeder, OnSeederInit } from 'nestjs-sequelize-seeder';
