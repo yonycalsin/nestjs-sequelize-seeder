@@ -28,7 +28,7 @@ export interface OnSeederInit<T = More> {
    everyone?(item: More | T): More | T;
 }
 
-export interface SeederOptions {
+export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
    model: typeof Model;
    unique: string | string[];
 }
