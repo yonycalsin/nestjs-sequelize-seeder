@@ -19,7 +19,7 @@ export class SeederService {
       @Inject(seeder_token.options)
       public options: SeederModuleOptions,
    ) {
-      this.log = new Logger('🚀 SeederService', true);
+      this.log = new Logger('SeederService', true);
    }
 
    /**
@@ -54,7 +54,7 @@ export class SeederService {
       this.model = this.con.models[seedData.modelName];
 
       if (!this.model) {
-         return this.log.error(`${seedData.modelName} not Found !`);
+         return this.log.error(`😢 ${seedData.modelName} not Found !`);
       }
 
       /**
@@ -117,7 +117,7 @@ export class SeederService {
                );
          });
       } catch (err) {
-         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
       }
    }
 
@@ -126,16 +126,18 @@ export class SeederService {
     * @description This function executes all the creation and alteration code of all the objects !
     */
    private async initialized(): Promise<void> {
-      const uniques = this.seedData.unique;
+      const uniques = this.seedData?.unique || [];
       const hasUniques = uniques.length > 0;
-      const isLog = this.options.logging;
+      const isLog = this.options?.logging;
+
+      let autoId = 0;
 
       for (let [index, item] of Object.entries<any>(this.data)) {
-         let alreadyitem = false;
+         let alreadyitem = true;
 
          // Called everyone function if exist !
          if (isFunction(this.seed.everyone)) {
-            item = this.seed.everyone(item);
+            item = this.seed?.everyone(item);
          }
 
          if (hasUniques) {
@@ -145,7 +147,7 @@ export class SeederService {
                   uniqueData[unique] = item[unique];
                } else {
                   this.log.warn(
-                     `Undefined value for '${unique}' in object ${0}`,
+                     `❓ Undefined value for '${unique}' in object ${index}`,
                   );
                }
             }
@@ -157,9 +159,7 @@ export class SeederService {
             } else {
                isLog &&
                   this.log.verbose(
-                     `Already exists ${
-                        this.seedData.modelName
-                     } :${index} '${Object.values(item).join(', ')}'`,
+                     `🍕 Already exists ${this.seedData.seedData} :${index}`,
                   );
             }
          } else {
