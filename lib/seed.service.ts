@@ -159,7 +159,7 @@ export class SeederService {
             } else {
                isLog &&
                   this.log.verbose(
-                     `🍕 Already exists ${this.seedData.seedData} :${index}`,
+                     `🍕 Already exists ${this.seedData?.seedName} :${index}`,
                   );
             }
          } else {
