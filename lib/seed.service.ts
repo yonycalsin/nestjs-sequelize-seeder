@@ -92,7 +92,7 @@ export class SeederService {
          if (data) return true;
          return false;
       } catch (err) {
-         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err?.original?.sqlMessage}`);
       }
    }
 
@@ -106,7 +106,7 @@ export class SeederService {
          if (data > 0) return true;
          return false;
       } catch (err) {
-         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err?.original?.sqlMessage}`);
       }
    }
 
@@ -139,7 +139,7 @@ export class SeederService {
                );
          });
       } catch (err) {
-         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err?.original?.sqlMessage}`);
       }
    }
 
