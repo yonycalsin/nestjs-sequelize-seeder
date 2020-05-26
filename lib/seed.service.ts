@@ -19,7 +19,7 @@ export class SeederService {
       @Inject(seeder_token.options)
       public options: SeederModuleOptions,
    ) {
-      this.log = new Logger('SeederService', true);
+      this.log = new Logger('SequelizeSeeder', true);
    }
 
    /**
@@ -65,6 +65,7 @@ export class SeederService {
          if (await this.verifyIfTableIsEmpty()) return;
       }
 
+      // For add unique field if autid is enabled
       if (this.options.enableAutoId) {
          seedData.unique = [this.options.autoIdFieldName].concat(
             seedData?.unique,
@@ -91,7 +92,7 @@ export class SeederService {
          if (data) return true;
          return false;
       } catch (err) {
-         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
       }
    }
 
@@ -105,7 +106,7 @@ export class SeederService {
          if (data > 0) return true;
          return false;
       } catch (err) {
-         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
       }
    }
 
@@ -138,7 +139,7 @@ export class SeederService {
                );
          });
       } catch (err) {
-         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SequelizeSeeder] ${err.original.sqlMessage}`);
       }
    }
 
@@ -183,7 +184,7 @@ export class SeederService {
             } else {
                isLog &&
                   this.log.verbose(
-                     `🌍 Already exists in ${this.seedData?.seedName} the :${index} item`,
+                     `😲 Already exists in ${this.seedData?.seedName} the :${index} item`,
                   );
             }
          } else {
