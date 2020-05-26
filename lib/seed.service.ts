@@ -65,8 +65,14 @@ export class SeederService {
          if (await this.verifyIfTableIsEmpty()) return;
       }
 
+      if (this.options.enableAutoId) {
+         seedData.unique = [this.options.autoIdFieldName].concat(
+            seedData?.unique,
+         );
+      }
+
       // Installing functions individually !
-      this.seed = new seed();
+      this.seed = new seed(this.options);
       this.data = this.seed.run();
       this.seedData = seedData;
 
@@ -114,6 +120,7 @@ export class SeederService {
    ): Promise<void> {
       const { disableEveryOne, enableAutoId, autoIdFieldName } = this.options;
 
+      // For add an id automaticly
       if (isBoolean(enableAutoId) && enableAutoId && isNumber(autoId)) {
          item[autoIdFieldName] = autoId;
       }
@@ -123,7 +130,6 @@ export class SeederService {
          item = this.seed.everyone(item, index);
       }
 
-      return;
       try {
          this.model.create(item).then(res => {
             this.options.logging &&
@@ -141,9 +147,10 @@ export class SeederService {
     * @description This function executes all the creation and alteration code of all the objects !
     */
    private async initialized(): Promise<void> {
+      const { logging, enableAutoId, autoIdFieldName } = this.options;
       const uniques = this.seedData?.unique || [];
       const hasUniques = uniques.length > 0;
-      const isLog = this.options?.logging;
+      const isLog = logging;
 
       let autoId = 0;
 
@@ -157,9 +164,11 @@ export class SeederService {
                if (item[unique]) {
                   uniqueData[unique] = item[unique];
                } else {
-                  this.log.warn(
-                     `❓ Undefined value for '${unique}' in object ${index} ${this.seedData?.seedName}`,
-                  );
+                  if (!(enableAutoId && unique === autoIdFieldName)) {
+                     this.log.warn(
+                        `❓ Undefined value for '${unique}' in object ${index} ${this.seedData?.seedName}`,
+                     );
+                  }
                }
             }
 
@@ -174,7 +183,7 @@ export class SeederService {
             } else {
                isLog &&
                   this.log.verbose(
-                     `🌍 Already exists in ${this.seedData?.seedName} :${index}`,
+                     `🌍 Already exists in ${this.seedData?.seedName} the :${index} item`,
                   );
             }
          } else {
