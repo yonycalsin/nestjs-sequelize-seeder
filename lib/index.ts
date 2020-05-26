@@ -29,8 +29,8 @@ export interface OnSeederInit<T = More> {
 }
 
 export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
-   model: typeof Model;
-   unique: string | string[];
+   model: typeof Model | string;
+   unique?: string | string[];
 }
 
 // Default data
