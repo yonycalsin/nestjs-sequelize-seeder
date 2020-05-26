@@ -20,12 +20,13 @@ export interface SeederModuleOptions {
    disabled?: boolean;
    runOnlyIfTableIsEmpty?: boolean;
    connection?: string;
+   enableAutoId?: boolean;
 }
 
 // For decorators
 export interface OnSeederInit<T = More> {
    run(options: SeederModuleOptions): (T | More)[];
-   everyone?(item: More | T): More | T;
+   everyone?(item: More | T, index: number): More | T;
 }
 
 export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
@@ -40,6 +41,7 @@ export const defaultOptions: SeederModuleOptions = {
    disabled: false,
    runOnlyIfTableIsEmpty: false,
    connection: DEFAULT_CONNECTION_NAME,
+   enableAutoId: true,
 };
 
 export * from './seed.module';
