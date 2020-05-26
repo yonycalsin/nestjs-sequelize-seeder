@@ -2,7 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { seeder_token } from './seed.constants';
 import { Sequelize } from 'sequelize-typescript';
 import { ModelCtor, Model } from 'sequelize/types';
-import { SeederModuleOptions, More } from '.';
+import { SeederModuleOptions, More, SeederOptions } from '.';
 import { __rest } from 'tslib';
 import MergeDefault from 'merge-options-default';
 import { isFunction, isBoolean, isNumber } from 'is-all-utils';
@@ -12,12 +12,14 @@ export class SeederService {
    private model: ModelCtor<Model<any, any>>;
    private con: Sequelize;
    private seed: any;
-   private seedData: any;
+   private seedData: Partial<SeederOptions & { seedName?: string }>;
    public log: Logger;
    private data: any;
    constructor(
       @Inject(seeder_token.options)
-      public options: SeederModuleOptions,
+      public options: Partial<
+         SeederModuleOptions & { containtForeignKeys?: boolean }
+      >,
    ) {
       this.log = new Logger('SequelizeSeeder', true);
    }
@@ -75,7 +77,7 @@ export class SeederService {
       // Installing functions individually !
       this.seed = new seed(this.options);
       this.data = this.seed.run();
-      this.seedData = seedData;
+      this.seedData = seedData as any;
 
       // Called all the cracks
       await this.initialized();
@@ -129,6 +131,15 @@ export class SeederService {
       // Called everyone function if exist !
       if (!disableEveryOne && isFunction(this.seed?.everyone)) {
          item = this.seed.everyone(item, index);
+      }
+
+      if (this.options.containtForeignKeys) {
+         const time = setTimeout(async () => {
+            await this.createItem(item, { autoId, index });
+            this.options.containtForeignKeys = false;
+            clearTimeout(time);
+         }, this.options.foreignTimeout);
+         return;
       }
 
       try {
