@@ -108,12 +108,16 @@ export class SeederService {
     * @description Create the object if it does not exist, and display a success message !
     * @param item More
     */
-   private async createItem(item: More, key?: any): Promise<void> {
+   private async createItem(
+      item: More,
+      { autoId, index }: More,
+   ): Promise<void> {
+      return;
       try {
          this.model.create(item).then(res => {
             this.options.logging &&
                this.log.log(
-                  `🎉 Created correctly, '${this?.seedData?.seedName}' :${key} !`,
+                  `🎉 Created correctly, '${this?.seedData?.seedName}' :${index} !`,
                );
          });
       } catch (err) {
@@ -133,7 +137,7 @@ export class SeederService {
       let autoId = 0;
 
       for (let [index, item] of Object.entries<any>(this.data)) {
-         let alreadyitem = true;
+         let alreadyitem = null;
 
          // Called everyone function if exist !
          if (isFunction(this.seed.everyone)) {
@@ -147,23 +151,31 @@ export class SeederService {
                   uniqueData[unique] = item[unique];
                } else {
                   this.log.warn(
-                     `❓ Undefined value for '${unique}' in object ${index}`,
+                     `❓ Undefined value for '${unique}' in object ${index} ${this.seedData?.seedName}`,
                   );
                }
             }
 
             alreadyitem = await this.isUnique(uniqueData);
 
-            if (!alreadyitem) {
-               await this.createItem(item, index);
+            if (alreadyitem === false) {
+               ++autoId;
+               await this.createItem(item, {
+                  autoId,
+                  index,
+               });
             } else {
                isLog &&
                   this.log.verbose(
-                     `🍕 Already exists ${this.seedData?.seedName} :${index}`,
+                     `🌍 Already exists in ${this.seedData?.seedName} :${index}`,
                   );
             }
          } else {
-            await this.createItem(item, index);
+            ++autoId;
+            await this.createItem(item, {
+               autoId,
+               index,
+            });
          }
       }
    }
