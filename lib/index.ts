@@ -21,6 +21,8 @@ export interface SeederModuleOptions {
    runOnlyIfTableIsEmpty?: boolean;
    connection?: string;
    enableAutoId?: boolean;
+   autoIdFieldName?: string;
+   disableEveryOne?: boolean;
 }
 
 // For decorators
@@ -42,6 +44,8 @@ export const defaultOptions: SeederModuleOptions = {
    runOnlyIfTableIsEmpty: false,
    connection: DEFAULT_CONNECTION_NAME,
    enableAutoId: true,
+   autoIdFieldName: 'id',
+   disableEveryOne: false,
 };
 
 export * from './seed.module';
