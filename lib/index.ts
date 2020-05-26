@@ -23,6 +23,7 @@ export interface SeederModuleOptions {
    enableAutoId?: boolean;
    autoIdFieldName?: string;
    disableEveryOne?: boolean;
+   foreignTimeout?: number;
 }
 
 // For decorators
@@ -34,6 +35,7 @@ export interface OnSeederInit<T = More> {
 export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
    model: typeof Model | string;
    unique?: string | string[];
+   containtForeignKeys?: boolean;
 }
 
 // Default data
@@ -46,6 +48,7 @@ export const defaultOptions: SeederModuleOptions = {
    enableAutoId: true,
    autoIdFieldName: 'id',
    disableEveryOne: false,
+   foreignTimeout: 2000,
 };
 
 export * from './seed.module';
