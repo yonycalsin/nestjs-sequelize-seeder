@@ -5,7 +5,7 @@ import { ModelCtor, Model } from 'sequelize/types';
 import { SeederModuleOptions, More } from '.';
 import { __rest } from 'tslib';
 import MergeDefault from 'merge-options-default';
-import { isUndefined } from 'is-all-utils';
+import { isUndefined, isFunction } from 'is-all-utils';
 
 @Injectable()
 export class SeederService {
@@ -19,7 +19,7 @@ export class SeederService {
       @Inject(seeder_token.options)
       public options: SeederModuleOptions,
    ) {
-      this.log = new Logger('SeederService', true);
+      this.log = new Logger('🎉 SeederService', true);
    }
 
    /**
@@ -107,14 +107,12 @@ export class SeederService {
     * @description Create the object if it does not exist, and display a success message !
     * @param item More
     */
-   private async createItem(item: More): Promise<void> {
+   private async createItem(item: More, key?: any): Promise<void> {
       try {
          this.model.create(item).then(res => {
             this.options.logging &&
                this.log.log(
-                  `Created correctly, '${Object.values(res).join(
-                     ', ',
-                  )}' with 'nestjs-sequelize-seeder' !`,
+                  `Created correctly, '${this?.seedData?.seedName}' :${key} !`,
                );
          });
       } catch (err) {
@@ -131,11 +129,11 @@ export class SeederService {
       const hasUniques = uniques.length > 0;
       const isLog = this.options.logging;
 
-      for (let [key, item] of Object.entries<any>(this.data)) {
+      for (let [index, item] of Object.entries<any>(this.data)) {
          let alreadyitem = false;
 
          // Called everyone function if exist !
-         if (this.seed.everyone) {
+         if (isFunction(this.seed.everyone)) {
             item = this.seed.everyone(item);
          }
 
@@ -150,20 +148,21 @@ export class SeederService {
                   );
                }
             }
+
             alreadyitem = await this.isUnique(uniqueData);
 
             if (!alreadyitem) {
-               await this.createItem(item);
+               await this.createItem(item, index);
             } else {
                isLog &&
                   this.log.verbose(
                      `Already exists ${
                         this.seedData.modelName
-                     } :${key} '${Object.values(item).join(', ')}'`,
+                     } :${index} '${Object.values(item).join(', ')}'`,
                   );
             }
          } else {
-            await this.createItem(item);
+            await this.createItem(item, index);
          }
       }
    }
