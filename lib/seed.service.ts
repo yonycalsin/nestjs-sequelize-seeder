@@ -5,7 +5,7 @@ import { ModelCtor, Model } from 'sequelize/types';
 import { SeederModuleOptions, More } from '.';
 import { __rest } from 'tslib';
 import MergeDefault from 'merge-options-default';
-import { isFunction } from 'is-all-utils';
+import { isFunction, isBoolean, isNumber } from 'is-all-utils';
 
 @Injectable()
 export class SeederService {
@@ -112,6 +112,17 @@ export class SeederService {
       item: More,
       { autoId, index }: More,
    ): Promise<void> {
+      const { disableEveryOne, enableAutoId, autoIdFieldName } = this.options;
+
+      if (isBoolean(enableAutoId) && enableAutoId && isNumber(autoId)) {
+         item[autoIdFieldName] = autoId;
+      }
+
+      // Called everyone function if exist !
+      if (!disableEveryOne && isFunction(this.seed?.everyone)) {
+         item = this.seed.everyone(item, index);
+      }
+
       return;
       try {
          this.model.create(item).then(res => {
@@ -138,11 +149,7 @@ export class SeederService {
 
       for (let [index, item] of Object.entries<any>(this.data)) {
          let alreadyitem = null;
-
-         // Called everyone function if exist !
-         if (isFunction(this.seed.everyone)) {
-            item = this.seed?.everyone(item);
-         }
+         index = Number(index) as any;
 
          if (hasUniques) {
             let uniqueData = {};
