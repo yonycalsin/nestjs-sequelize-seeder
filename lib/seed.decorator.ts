@@ -19,7 +19,9 @@ export function Seeder(options: SeederOptions) {
    return (target: Function) => {
       options = Merge(defaultOptions, options, {
          modelName: (options as any)?.model?.name || options.model,
-         unique: isString(options.unique) ? [options.unique] : options.unique,
+         unique: isString(options.unique)
+            ? [options.unique]
+            : options.unique || [],
          seedName: target.name,
       }) as any;
 
