@@ -5,7 +5,7 @@ import { ModelCtor, Model } from 'sequelize/types';
 import { SeederModuleOptions, More } from '.';
 import { __rest } from 'tslib';
 import MergeDefault from 'merge-options-default';
-import { isUndefined, isFunction } from 'is-all-utils';
+import { isFunction } from 'is-all-utils';
 
 @Injectable()
 export class SeederService {
@@ -19,7 +19,7 @@ export class SeederService {
       @Inject(seeder_token.options)
       public options: SeederModuleOptions,
    ) {
-      this.log = new Logger('🎉 SeederService', true);
+      this.log = new Logger('🚀 SeederService', true);
    }
 
    /**
@@ -37,6 +37,7 @@ export class SeederService {
       const newSeedData: SeederModuleOptions = __rest(seedData, [
          'modelName',
          'unique',
+         'seedName',
       ]);
 
       this.options = MergeDefault<SeederModuleOptions>(
@@ -84,7 +85,7 @@ export class SeederService {
          if (data) return true;
          return false;
       } catch (err) {
-         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
       }
    }
 
@@ -98,7 +99,7 @@ export class SeederService {
          if (data > 0) return true;
          return false;
       } catch (err) {
-         throw new Error(`[SeederService] ${err.original.sqlMessage}`);
+         throw new Error(`[💥 SeederService] ${err.original.sqlMessage}`);
       }
    }
 
@@ -112,7 +113,7 @@ export class SeederService {
          this.model.create(item).then(res => {
             this.options.logging &&
                this.log.log(
-                  `Created correctly, '${this?.seedData?.seedName}' :${key} !`,
+                  `🎉 Created correctly, '${this?.seedData?.seedName}' :${key} !`,
                );
          });
       } catch (err) {
