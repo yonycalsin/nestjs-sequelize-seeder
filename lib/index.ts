@@ -23,7 +23,7 @@ export interface SeederModuleOptions {
    enableAutoId?: boolean;
    autoIdFieldName?: string;
    disableEveryOne?: boolean;
-   foreignTimeout?: number;
+   foreignDelay?: number;
 }
 
 // For decorators
@@ -48,7 +48,7 @@ export const defaultOptions: SeederModuleOptions = {
    enableAutoId: true,
    autoIdFieldName: 'id',
    disableEveryOne: false,
-   foreignTimeout: 2000,
+   foreignDelay: 2000,
 };
 
 export * from './seed.module';
