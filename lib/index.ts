@@ -1,5 +1,5 @@
 /*!
- * nestjs-sequelize-seeder v1.1.0 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
+ * nestjs-sequelize-seeder v1.1.1 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
  * Copyright 2020 The nestjs-sequelize-seeder Authors
  * Copyright 2020 Yoni Calsin.
  * Licensed under MIT (https://github.com/yoicalsin/nestjs-sequelize-seeder/blob/master/LICENSE)
@@ -23,7 +23,7 @@ export interface SeederModuleOptions {
    enableAutoId?: boolean;
    autoIdFieldName?: string;
    disableEveryOne?: boolean;
-   foreignTimeout?: number;
+   foreignDelay?: number;
 }
 
 // For decorators
@@ -48,7 +48,7 @@ export const defaultOptions: SeederModuleOptions = {
    enableAutoId: true,
    autoIdFieldName: 'id',
    disableEveryOne: false,
-   foreignTimeout: 2000,
+   foreignDelay: 2000,
 };
 
 export * from './seed.module';

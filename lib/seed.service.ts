@@ -138,7 +138,7 @@ export class SeederService {
             await this.createItem(item, { autoId, index });
             this.options.containsForeignKeys = false;
             clearTimeout(time);
-         }, this.options.foreignTimeout);
+         }, this.options.foreignDelay);
          return;
       }
 
