@@ -50,32 +50,50 @@ import { SeederModule } from 'nestjs-sequelize-seeder';
 @Module({
    imports: [
       SeederModule.forRoot({
-         isGlobal: true, // Default: true
-         logging: true, // Default: true
-         disabled: false, // Default: false
-         runOnlyIfTableIsEmpty: false, // Default: false
-         connection: 'default', // Default: default
+         // Activate this if you want to run the seeders if the table is empty in the database
+         runOnlyIfTableIsEmpty: true,
       }),
    ],
 })
 export class AppModule {}
 ```
 
+All options
+
+```ts
+SeederModule.forRoot({
+   isGlobal: true,
+   logging: true,
+   disabled: false,
+   runOnlyIfTableIsEmpty: false,
+   connection: 'default',
+   autoIdFieldName: 'id',
+   disableEveryOne: false,
+   enableAutoId: true,
+   foreignTimeout: 2000, // 2 seconds
+});
+```
+
 The **forRoot()** method supports all the configuration properties exposed by the seeder constuctor . In addition, there are several extra configuration properties described below.
 
-| name                  | Description                                                                                                                                             | type      |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| isGlobal              | If you want the module globally (**default: _true_** )                                                                                                  | _boolean_ |
-| logging               | Option to display or not, the log of each creation (**default: _true_**)                                                                                | _boolean_ |
-| disabled              | This option allows you to disable the whole module, it is very useful for production mode (**default: _false_**)                                        | _boolean_ |
-| runOnlyIfTableIsEmpty | This option allows you to disable if the table is empty (**default: _false_**)                                                                          | _boolean_ |
-| connection            | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**) | _string_  |
+| name                  | Description                                                                                                                                                                                      | type      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
+| isGlobal              | If you want the module globally (**default: _true_** )                                                                                                                                           | _boolean_ |
+| logging               | Option to display or not, the log of each creation (**default: _true_**)                                                                                                                         | _boolean_ |
+| disabled              | This option allows you to disable the whole module, it is very useful for production mode (**default: _false_**)                                                                                 | _boolean_ |
+| runOnlyIfTableIsEmpty | This option allows you to disable if the table is empty (**default: _false_**)                                                                                                                   | _boolean_ |
+| connection            | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**)                                          | _string_  |
+| autoIdFieldName       | This option is the id field, it works if the option `enableAutoId` is activated (**default: _id_**)                                                                                              | _string_  |
+| enableAutoId          | This option adds the id automatically to each item, saving you the work, and solving some errors, the name of the id field is customized with the option `autoIdFieldName` (**default: _true_**) | _boolean_ |
+| foreignTimeout        | This option adds the timeout for tables that have relationships with other tables for each element, and this works if a seed has the `containsForeignKeys` option enabled                        | _number_  |
 
 ### Seeder
 
 Sequelize implements the Active Record pattern. With this pattern, you use model classes directly to interact with the database. To continue the example, we need at least one seed. Let's define the User seed.
 
 The decorator `Seeder` receives as parameter the unique values, this has to be added if you have in the table any column as unique !
+
+> The following options will be applied individually to the seeders, and will be compared and operated with the global configuration
 
 ```ts
 @Seeder({
@@ -84,8 +102,18 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
    // Here you can also add the following options, but those options only work for this seeder !
    disabled: false,
    logging: true,
-   runOnlyIfTableIsEmpty: false
+   runOnlyIfTableIsEmpty: false,
+   connection: 'default',
+   disableEveryOne: false,
+   enableAutoId: true,
+
+    // Enables this function if it uses a relationship management model (foreignKeys)
+   containsForeignKeys: false,
+
+   // This option add run time delay, if you still have errors just increase the delay time
+   foreignTimeout: 2000,
 })
+
 ```
 
 > `genSaltSync` and `hashSync` are imported from **bcryptjs**, you will have to install it independently !
@@ -152,14 +180,144 @@ import { SeedUser } from 'src/seeds/user.seed';
 export class UserModule {}
 ```
 
+## 🎉 Associations, ForeignKeys
+
+You were probably wondering how I handle seeders with associations, well I'm anxious to tell you that it's like this
+
+-  First create three models
+-  We'll make some connections
+-  Creation of seeders for each model
+
+```ts
+@Table
+export class Cat extends Model<Cat> {
+   @PrimaryKey
+   @AutoIncrement
+   @Column
+   id: number;
+
+   @Column
+   name: string;
+
+   @BelongsToMany(
+      () => Breed,
+      () => CatBreed,
+   )
+   breeds: Breed[];
+}
+
+@Table
+export class Breed extends Model<Breed> {
+   @PrimaryKey
+   @AutoIncrement
+   @Column
+   id: number;
+
+   @Column
+   name: string;
+
+   @BelongsToMany(
+      () => Cat,
+      () => CatBreed,
+   )
+   Cats: Cat[];
+}
+
+@Table
+export class CatBreed extends Model<CatBreed> {
+   @ForeignKey(() => Cat)
+   @Column
+   cat_id: number;
+
+   @ForeignKey(() => Breed)
+   @Column
+   breed_id: number;
+}
+```
+
+And as a consequence we will create the sowers
+
+```ts
+@Seeder({
+   model: Cat,
+})
+export class SeedCat implements OnSeederInit {
+   run() {
+      const data = [
+         {
+            name: 'First Cat',
+         },
+         {
+            name: 'Second Cat',
+         },
+      ];
+      return data;
+   }
+}
+@Seeder({
+   model: Breed,
+})
+export class SeedCatBreed implements OnSeederInit {
+   run() {
+      const data = [
+         {
+            name: 'First Breed',
+         },
+         {
+            name: 'Second Breed',
+         },
+      ];
+      return data;
+   }
+}
+```
+
+As you can see we already created the sembredores free of relations, but the next one has relations, therefore we have to activate the option `containsForeignKeys`, this works with `One-to-many`, `Many-to-many`, and `One-to-one`, if you get an error just increase the delay time in the `foreignTimeout` option in the global configuration
+
+```ts
+@Seeder({
+   model: CatBreed,
+   containsForeignKeys: true,
+})
+export class SeedCatBreedUse implements OnSeederInit {
+   run() {
+      const data = [
+         {
+            cat_id: 1,
+            breed_id: 2,
+         },
+         {
+            cat_id: 1,
+            breed_id: 1,
+         },
+         {
+            cat_id: 2,
+            breed_id: 1,
+         },
+         {
+            cat_id: 2,
+            breed_id: 2,
+         },
+      ];
+      return data;
+   }
+}
+```
+
 ## ⭐ Support for
 
 `nestjs-sequelize-seeder` is an open source project licensed by [MIT](LICENSE). You can grow thanks to the sponsors and the support of the amazing sponsors. If you want to join them, [contact me here](mailto:helloyonicb@gmail.com).
 
 ## 🎩 Stay in touch
 
--  Author [Yoni Calsin](https://github.com/yoicalsin)
--  Twitter [Yoni Calsin](https://twitter.com/yoicalsin)
+-  Github [@yoicalsin](https://github.com/yoicalsin)
+-  Twitter [@yoicalsin](https://twitter.com/yoicalsin)
+-  Instagram [@yoicalsin](https://instagram.com/yoicalsin)
+-  Medium [@yoicalsin](https://medium.com/yoicalsin)
+
+## 🚀 Contributors
+
+Thanks to the wonderful people who collaborate with me !
 
 ## 📜 License
 

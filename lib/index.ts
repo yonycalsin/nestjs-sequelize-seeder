@@ -1,5 +1,5 @@
 /*!
- * nestjs-sequelize-seeder v1.0.8 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
+ * nestjs-sequelize-seeder v1.1.0 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
  * Copyright 2020 The nestjs-sequelize-seeder Authors
  * Copyright 2020 Yoni Calsin.
  * Licensed under MIT (https://github.com/yoicalsin/nestjs-sequelize-seeder/blob/master/LICENSE)
@@ -20,17 +20,22 @@ export interface SeederModuleOptions {
    disabled?: boolean;
    runOnlyIfTableIsEmpty?: boolean;
    connection?: string;
+   enableAutoId?: boolean;
+   autoIdFieldName?: string;
+   disableEveryOne?: boolean;
+   foreignTimeout?: number;
 }
 
 // For decorators
 export interface OnSeederInit<T = More> {
    run(options: SeederModuleOptions): (T | More)[];
-   everyone?(item: More | T): More | T;
+   everyone?(item: More | T, index: number): More | T;
 }
 
 export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
-   model: typeof Model;
-   unique: string | string[];
+   model: typeof Model | string;
+   unique?: string | string[];
+   containsForeignKeys?: boolean;
 }
 
 // Default data
@@ -40,6 +45,10 @@ export const defaultOptions: SeederModuleOptions = {
    disabled: false,
    runOnlyIfTableIsEmpty: false,
    connection: DEFAULT_CONNECTION_NAME,
+   enableAutoId: true,
+   autoIdFieldName: 'id',
+   disableEveryOne: false,
+   foreignTimeout: 2000,
 };
 
 export * from './seed.module';
