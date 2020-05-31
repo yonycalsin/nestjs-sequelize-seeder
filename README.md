@@ -70,7 +70,7 @@ SeederModule.forRoot({
    autoIdFieldName: 'id',
    disableEveryOne: false,
    enableAutoId: true,
-   foreignTimeout: 2000,
+   foreignTimeout: 2000, // 2 seconds
 });
 ```
 
@@ -93,6 +93,8 @@ Sequelize implements the Active Record pattern. With this pattern, you use model
 
 The decorator `Seeder` receives as parameter the unique values, this has to be added if you have in the table any column as unique !
 
+> The following options will be applied individually to the seeders, and will be compared and operated with the global configuration
+
 ```ts
 @Seeder({
    model: ModelUser,
@@ -106,7 +108,10 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
    enableAutoId: true,
 
     // Enables this function if it uses a relationship management model (foreignKeys)
-   containsForeignKeys: false
+   containsForeignKeys: false,
+
+   // This option add run time delay, if you still have errors just increase the delay time
+   foreignTimeout: 2000,
 })
 
 ```
