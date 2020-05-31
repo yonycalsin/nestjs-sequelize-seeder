@@ -58,7 +58,7 @@ import { SeederModule } from 'nestjs-sequelize-seeder';
 export class AppModule {}
 ```
 
-Todas las opciones
+All options
 
 ```ts
 SeederModule.forRoot({
