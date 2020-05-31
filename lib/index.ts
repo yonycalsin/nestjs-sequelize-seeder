@@ -1,5 +1,5 @@
 /*!
- * nestjs-sequelize-seeder v1.1.0 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
+ * nestjs-sequelize-seeder v1.1.1 (https://github.com/yoicalsin/nestjs-sequelize-seeder)
  * Copyright 2020 The nestjs-sequelize-seeder Authors
  * Copyright 2020 Yoni Calsin.
  * Licensed under MIT (https://github.com/yoicalsin/nestjs-sequelize-seeder/blob/master/LICENSE)
