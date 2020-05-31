@@ -35,7 +35,7 @@ export interface OnSeederInit<T = More> {
 export interface SeederOptions extends Omit<SeederModuleOptions, 'isGlobal'> {
    model: typeof Model | string;
    unique?: string | string[];
-   containtForeignKeys?: boolean;
+   containsForeignKeys?: boolean;
 }
 
 // Default data

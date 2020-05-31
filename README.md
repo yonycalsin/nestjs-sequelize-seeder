@@ -85,7 +85,7 @@ The **forRoot()** method supports all the configuration properties exposed by th
 | connection            | This option is to add the name of the connection, this is very important if you use several connections to different databases (**default: _default_**)                                          | _string_  |
 | autoIdFieldName       | This option is the id field, it works if the option `enableAutoId` is activated (**default: _id_**)                                                                                              | _string_  |
 | enableAutoId          | This option adds the id automatically to each item, saving you the work, and solving some errors, the name of the id field is customized with the option `autoIdFieldName` (**default: _true_**) | _boolean_ |
-| foreignTimeout        | This option adds the timeout for tables that have relationships with other tables for each element, and this works if a seed has the `containtForeignKeys` option enabled                        | _number_  |
+| foreignTimeout        | This option adds the timeout for tables that have relationships with other tables for each element, and this works if a seed has the `containsForeignKeys` option enabled                        | _number_  |
 
 ### Seeder
 
@@ -106,7 +106,7 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
    enableAutoId: true,
 
     // Enables this function if it uses a relationship management model (foreignKeys)
-   containtForeignKeys: false
+   containsForeignKeys: false
 })
 
 ```
@@ -267,12 +267,12 @@ export class SeedCatBreed implements OnSeederInit {
 }
 ```
 
-As you can see we already created the sembredores free of relations, but the next one has relations, therefore we have to activate the option `containtForeignKeys`, this works with `One-to-many`, `Many-to-many`, and `One-to-one`, if you get an error just increase the delay time in the `foreignTimeout` option in the global configuration
+As you can see we already created the sembredores free of relations, but the next one has relations, therefore we have to activate the option `containsForeignKeys`, this works with `One-to-many`, `Many-to-many`, and `One-to-one`, if you get an error just increase the delay time in the `foreignTimeout` option in the global configuration
 
 ```ts
 @Seeder({
    model: CatBreed,
-   containtForeignKeys: true,
+   containsForeignKeys: true,
 })
 export class SeedCatBreedUse implements OnSeederInit {
    run() {

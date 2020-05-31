@@ -9,7 +9,7 @@ import { isString } from 'is-all-utils';
  */
 const defaultOptions: Omit<SeederOptions, 'model'> = {
    unique: [],
-   containtForeignKeys: false,
+   containsForeignKeys: false,
 };
 
 /**

@@ -18,7 +18,7 @@ export class SeederService {
    constructor(
       @Inject(seeder_token.options)
       public options: Partial<
-         SeederModuleOptions & { containtForeignKeys?: boolean }
+         SeederModuleOptions & { containsForeignKeys?: boolean }
       >,
    ) {
       this.log = new Logger('SequelizeSeeder', true);
@@ -133,10 +133,10 @@ export class SeederService {
          item = this.seed.everyone(item, index);
       }
 
-      if (this.options.containtForeignKeys) {
+      if (this.options.containsForeignKeys) {
          const time = setTimeout(async () => {
             await this.createItem(item, { autoId, index });
-            this.options.containtForeignKeys = false;
+            this.options.containsForeignKeys = false;
             clearTimeout(time);
          }, this.options.foreignTimeout);
          return;
