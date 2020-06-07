@@ -312,7 +312,7 @@ export class SeedCatBreedUse implements OnSeederInit {
 
 -  Github [@yonicalsin](https://github.com/yonicalsin)
 -  Twitter [@yonicalsin](https://twitter.com/yonicalsin)
--  Instagram [@yonicalsin](https://instagram.com/yonicalsin)
+-  Instagram [@yoni_calsin](https://instagram.com/yoni_calsin)
 -  Medium [@yonicalsin](https://medium.com/yonicalsin)
 
 ## 🚀 Contributors
