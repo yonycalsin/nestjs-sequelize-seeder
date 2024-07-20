@@ -19,16 +19,13 @@
    <a href="https://github.com/yonicalsin/nestjs-sequelize-seeder" target="_blank">
    <img src="https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_95.svg" alt="Coverage" /></a>
    <a href="https://github.com/yonicalsin/nestjs-sequelize-seeder"><img src="https://img.shields.io/badge/Github%20Page-nestjs.sequelize.seeder-yellow?style=flat-square&logo=github" /></a>
-   <a href="https://github.com/yonicalsin"><img src="https://img.shields.io/badge/Author-Yoni%20Calsin-blueviolet?style=flat-square&logo=appveyor" /></a>
-   <a href="https://twitter.com/yonicalsin" target="_blank">
-   <img src="https://img.shields.io/twitter/follow/yonicalsin.svg?style=social&label=Follow"></a>
 </p>
 
-## 🌐 Description
+## Description
 
 Under the hood, nestjs-sequelize-seeder makes use of the [nest framework](https://nestjs.com/), and you also need to install [nestjs](https://nestjs.com/), and [sequelize](https://docs.nestjs.com/techniques/database#sequelize-integration) !
 
-## 📦 Integration
+## Integration
 
 To start using it, we first install the required dependencies. In this chapter we will demonstrate the use of the seeder for nestjs.
 
@@ -39,7 +36,7 @@ You simply need to install the package !
 npm install --save nestjs-sequelize-seeder
 ```
 
-## ▶️ Getting started
+## Getting started
 
 Once the installation process is complete, we can import the **SeederModule** into the root **AppModule**
 
@@ -180,7 +177,7 @@ import { SeedUser } from 'src/seeds/user.seed';
 export class UserModule {}
 ```
 
-## 🎉 Associations, ForeignKeys
+## Associations, ForeignKeys
 
 You were probably wondering how I handle seeders with associations, well I'm anxious to tell you that it's like this
 
@@ -304,21 +301,6 @@ export class SeedCatBreedUse implements OnSeederInit {
 }
 ```
 
-## ⭐ Support for
-
-`nestjs-sequelize-seeder` is an open source project licensed by [MIT](LICENSE). You can grow thanks to the sponsors and the support of the amazing sponsors. If you want to join them, [contact me here](mailto:helloyonicb@gmail.com).
-
-## 🎩 Stay in touch
-
--  Github [@yonicalsin](https://github.com/yonicalsin)
--  Twitter [@yonicalsin](https://twitter.com/yonicalsin)
--  Instagram [@yoni_calsin](https://instagram.com/yoni_calsin)
--  Medium [@yonicalsin](https://medium.com/yonicalsin)
-
-## 🚀 Contributors
-
-Thanks to the wonderful people who collaborate with me !
-
-## 📜 License
+## License
 
 `nestjs-sequelize-seeder` is [MIT licensed](LICENSE).
