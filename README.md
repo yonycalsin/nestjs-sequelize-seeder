@@ -1,3 +1,5 @@
+
+
 <p>
 A simple extension library for nestjs sequelize to perform seeding.
 </p>
@@ -100,7 +102,7 @@ The decorator `Seeder` receives as parameter the unique values, this has to be a
    disableEveryOne: false,
    enableAutoId: true,
 
-    // Enables this function if it uses a relationship management model (foreignKeys)
+    // Enables this option if it uses a relationship management model (foreignKeys)
    containsForeignKeys: false,
 
    // This option add run time delay, if you still have errors just increase the delay time
